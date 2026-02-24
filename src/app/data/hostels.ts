@@ -26,7 +26,7 @@ export const hostels: Hostel[] = [
   },
   {
     id: "tn2",
-    name: "Madurai Meenakshi Stay",
+    name: "Madurai Meenakshi Hostel",
     location: "Madurai, Tamil Nadu",
     coordinates: [9.9195, 78.1193], // Near Meenakshi Temple
     price: 850,
@@ -38,7 +38,7 @@ export const hostels: Hostel[] = [
     roomTypes: ["Double", "Family Room"],
     distanceFromCenter: "0.5 km",
     cancellationPolicy: "Non-refundable",
-    description: "A traditional stay located just walking distance from the majestic Meenakshi Amman Temple.",
+    description: "A traditional hostel located just walking distance from the majestic Meenakshi Amman Temple.",
     images: ["https://images.unsplash.com/photo-1596423735880-5f2a689b903e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWR1cmFpfGVufDF8fHx8MTc3MTgyMjQyNHww&ixlib=rb-4.1.0&q=80&w=1080"],
     reviews: [
       { id: "r2", userName: "Priya M", rating: 5, comment: "Perfect location for temple darshan.", date: "2026-02-01" }
@@ -66,7 +66,7 @@ export const hostels: Hostel[] = [
   },
   {
     id: "tn4",
-    name: "Coimbatore Tech Hub Stay",
+    name: "Coimbatore Tech Hub Hostel",
     location: "Coimbatore, Tamil Nadu",
     coordinates: [11.0168, 76.9558], // Coimbatore city
     price: 1300,
@@ -78,7 +78,7 @@ export const hostels: Hostel[] = [
     roomTypes: ["Single", "Double"],
     distanceFromCenter: "1.0 km",
     cancellationPolicy: "Free cancellation up to 24h",
-    description: "Modern, business-friendly stay catering to digital nomads and IT professionals stopping by Coimbatore.",
+    description: "Modern, business-friendly hostel catering to digital nomads and IT professionals stopping by Coimbatore.",
     images: ["https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxob3N0ZWwlMjBidXNpbmVzc3xlbnwxfHx8fDE3NzE4MjQ0MjR8MA&ixlib=rb-4.1.0&q=80&w=1080"],
     reviews: [],
   },
@@ -120,7 +120,7 @@ export const hostels: Hostel[] = [
   },
   {
     id: "tn7",
-    name: "Tiruchirappalli Rockfort Stay",
+    name: "Tiruchirappalli Rockfort Hostel",
     location: "Trichy, Tamil Nadu",
     coordinates: [10.7905, 78.7047],
     price: 800,
@@ -132,7 +132,7 @@ export const hostels: Hostel[] = [
     roomTypes: ["Single", "Double"],
     distanceFromCenter: "2.5 km",
     cancellationPolicy: "Flexible",
-    description: "Affordable stay with easy access to the famous Rockfort Temple.",
+    description: "Affordable backpacker hostel with easy access to the famous Rockfort Temple.",
     images: ["https://images.unsplash.com/photo-1566073771259-6a8506099945?crop=entropy&cs=tinysrgb&fit=max&fm=jpg"],
     reviews: [],
   },
@@ -250,7 +250,7 @@ export const hostels: Hostel[] = [
   },
   {
     id: "dl1",
-    name: "Delhi City Center Lodge",
+    name: "Delhi City Center Hostel",
     location: "New Delhi, Delhi",
     coordinates: [28.6139, 77.2090], // Connaught Place
     price: 1200,
@@ -262,13 +262,13 @@ export const hostels: Hostel[] = [
     roomTypes: ["Single", "Double"],
     distanceFromCenter: "0.1 km",
     cancellationPolicy: "Free cancellation up to 24 hours",
-    description: "Located right next to CP, perfect for exploring Delhi.",
+    description: "Located right next to CP, perfect luxury hostel for exploring Delhi.",
     images: ["https://images.unsplash.com/photo-1582719508461-905c673771fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg"],
     reviews: [],
   },
   {
     id: "ka1",
-    name: "Bangalore Indie-Stay",
+    name: "Bangalore Indie-Hostel",
     location: "Bangalore, Karnataka",
     coordinates: [12.9716, 77.5946],
     price: 1400,
@@ -280,7 +280,7 @@ export const hostels: Hostel[] = [
     roomTypes: ["Pod", "Single"],
     distanceFromCenter: "2.0 km",
     cancellationPolicy: "Free cancellation 24h prior",
-    description: "Luxury pods for techies visiting the Silicon Valley of India.",
+    description: "Luxury pods for techies visiting the Silicon Valley of India, acting as a premium coworking hostel.",
     images: ["https://images.unsplash.com/photo-1555854877-bab0e564b8d5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg"],
     reviews: [],
   },
@@ -358,7 +358,7 @@ export const hostels: Hostel[] = [
   },
   {
     id: "kl1",
-    name: "Kochi Backwaters Stay",
+    name: "Kochi Backwaters Hostel",
     location: "Kochi, Kerala",
     coordinates: [9.9312, 76.2673],
     price: 1000,
