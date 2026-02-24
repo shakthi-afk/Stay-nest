@@ -18,7 +18,7 @@ export function LoginModal() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!loginEmail || !loginPassword) {
       toast.error("Please fill in all fields");
       return;
@@ -32,7 +32,7 @@ export function LoginModal() {
     });
     setShowLoginModal(false);
     toast.success("Logged in successfully!");
-    
+
     // Reset form
     setLoginEmail("");
     setLoginPassword("");
@@ -40,7 +40,7 @@ export function LoginModal() {
 
   const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!signupName || !signupEmail || !signupPassword || !signupConfirmPassword) {
       toast.error("Please fill in all fields");
       return;
@@ -64,7 +64,7 @@ export function LoginModal() {
     });
     setShowLoginModal(false);
     toast.success("Account created successfully!");
-    
+
     // Reset form
     setSignupName("");
     setSignupEmail("");
@@ -76,7 +76,7 @@ export function LoginModal() {
     <Dialog open={showLoginModal} onOpenChange={setShowLoginModal}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Welcome to StayNest</DialogTitle>
+          <DialogTitle>Welcome to {import.meta.env.VITE_APP_NAME || "StayNest"}</DialogTitle>
           <DialogDescription>
             Login or create an account to continue
           </DialogDescription>
@@ -101,7 +101,7 @@ export function LoginModal() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="login-password">Password</Label>
                 <Input
@@ -143,7 +143,7 @@ export function LoginModal() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="signup-email">Email</Label>
                 <Input
@@ -155,7 +155,7 @@ export function LoginModal() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="signup-password">Password</Label>
                 <Input
@@ -167,7 +167,7 @@ export function LoginModal() {
                   required
                 />
               </div>
-              
+
               <div>
                 <Label htmlFor="signup-confirm-password">Confirm Password</Label>
                 <Input

@@ -34,7 +34,7 @@ export function Header() {
         <span>Home</span>
         <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full rounded-full" />
       </Link>
-      
+
       <Link
         to="/search"
         className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-all duration-300 relative group"
@@ -76,7 +76,7 @@ export function Header() {
             )}
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full rounded-full" />
           </Link>
-          
+
           <Link
             to="/dashboard"
             className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-indigo-600 transition-all duration-300 relative group"
@@ -92,12 +92,11 @@ export function Header() {
   );
 
   return (
-    <header 
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled 
-          ? "bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/50 border-b border-slate-100" 
+    <header
+      className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
+          ? "bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/50 border-b border-slate-100"
           : "bg-white/95 backdrop-blur-sm"
-      }`}
+        }`}
     >
       <div className="container mx-auto px-6 py-3">
         <div className="flex items-center justify-between">
@@ -110,9 +109,9 @@ export function Header() {
             </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold bg-gradient-to-r from-indigo-700 to-violet-600 bg-clip-text text-transparent" style={{ fontFamily: 'var(--font-heading)' }}>
-                StayNest
+                {import.meta.env.VITE_APP_NAME || "StayNest"}
               </span>
-              <span className="text-[10px] font-medium text-slate-400 tracking-widest uppercase -mt-0.5">Premium Hostels</span>
+              <span className="text-[10px] font-medium text-slate-400 tracking-widest uppercase -mt-0.5">{import.meta.env.VITE_APP_TAGLINE || "Premium Hostels"}</span>
             </div>
           </Link>
 
@@ -131,8 +130,8 @@ export function Header() {
                   </div>
                   <span className="text-sm font-medium text-slate-700">{user?.name}</span>
                 </div>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={handleLogout}
                   className="rounded-full border-slate-200 hover:border-red-200 hover:bg-red-50 hover:text-red-600 transition-all duration-300"
                 >
@@ -141,7 +140,7 @@ export function Header() {
                 </Button>
               </div>
             ) : (
-              <Button 
+              <Button
                 onClick={() => setShowLoginModal(true)}
                 className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-full px-6 shadow-lg shadow-indigo-200 hover:shadow-indigo-300 transition-all duration-300 hover:scale-105"
               >
@@ -164,7 +163,7 @@ export function Header() {
               </SheetHeader>
               <nav className="flex flex-col gap-5 mt-8">
                 <NavLinks />
-                
+
                 <div className="pt-6 border-t border-slate-100">
                   {isLoggedIn ? (
                     <>

@@ -276,7 +276,7 @@ export function HomePage() {
               <Shield className="size-4" />
               Why travelers trust us
             </div>
-            <h2 style={{ fontFamily: 'var(--font-heading)' }}>Why Choose StayNest?</h2>
+            <h2 style={{ fontFamily: 'var(--font-heading)' }}>Why Choose {import.meta.env.VITE_APP_NAME || "StayNest"}?</h2>
             <p className="text-slate-500 mt-3 max-w-lg mx-auto">
               We make hostel booking seamless and trustworthy
             </p>

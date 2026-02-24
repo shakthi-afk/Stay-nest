@@ -21,8 +21,8 @@ export function Footer() {
                 <Sparkles className="size-5" />
               </div>
               <div>
-                <span className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>StayNest</span>
-                <p className="text-[10px] font-medium text-slate-500 tracking-widest uppercase -mt-0.5">Premium Hostels</p>
+                <span className="text-xl font-bold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{import.meta.env.VITE_APP_NAME || "StayNest"}</span>
+                <p className="text-[10px] font-medium text-slate-500 tracking-widest uppercase -mt-0.5">{import.meta.env.VITE_APP_TAGLINE || "Premium Hostels"}</p>
               </div>
             </div>
             <p className="text-sm text-slate-400 mb-6 leading-relaxed">
@@ -30,9 +30,9 @@ export function Footer() {
             </p>
             <div className="flex gap-3">
               {[
-                { icon: Facebook, href: "https://facebook.com", hoverColor: "hover:bg-blue-600 hover:shadow-blue-500/25" },
-                { icon: Twitter, href: "https://twitter.com", hoverColor: "hover:bg-sky-500 hover:shadow-sky-500/25" },
-                { icon: Instagram, href: "https://instagram.com", hoverColor: "hover:bg-pink-600 hover:shadow-pink-500/25" },
+                { icon: Facebook, href: import.meta.env.VITE_SOCIAL_FACEBOOK || "https://facebook.com", hoverColor: "hover:bg-blue-600 hover:shadow-blue-500/25" },
+                { icon: Twitter, href: import.meta.env.VITE_SOCIAL_TWITTER || "https://twitter.com", hoverColor: "hover:bg-sky-500 hover:shadow-sky-500/25" },
+                { icon: Instagram, href: import.meta.env.VITE_SOCIAL_INSTAGRAM || "https://instagram.com", hoverColor: "hover:bg-pink-600 hover:shadow-pink-500/25" },
               ].map((social, i) => (
                 <a
                   key={i}
@@ -95,8 +95,8 @@ export function Footer() {
             <h3 className="text-white mb-5 text-sm font-semibold uppercase tracking-wider">Contact Us</h3>
             <ul className="space-y-4">
               {[
-                { icon: Mail, label: "Email", value: "support@staynest.com", href: "mailto:support@staynest.com" },
-                { icon: Phone, label: "Phone", value: "+91 123 456 7890", href: "tel:+911234567890" },
+                { icon: Mail, label: "Email", value: import.meta.env.VITE_CONTACT_EMAIL || "support@staynest.com", href: `mailto:${import.meta.env.VITE_CONTACT_EMAIL || "support@staynest.com"}` },
+                { icon: Phone, label: "Phone", value: import.meta.env.VITE_CONTACT_PHONE || "+91 123 456 7890", href: `tel:${(import.meta.env.VITE_CONTACT_PHONE || "+91 123 456 7890").replace(/\s/g, '')}` },
               ].map((contact) => (
                 <li key={contact.label} className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -116,7 +116,7 @@ export function Footer() {
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Address</p>
-                  <p className="text-sm text-slate-300">Mumbai, Maharashtra, India</p>
+                  <p className="text-sm text-slate-300">{import.meta.env.VITE_CONTACT_ADDRESS || "Mumbai, Maharashtra, India"}</p>
                 </div>
               </li>
             </ul>
@@ -126,7 +126,7 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-14 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-500">
-            &copy; 2026 StayNest. All rights reserved.
+            &copy; {new Date().getFullYear()} {import.meta.env.VITE_APP_NAME || "StayNest"}. All rights reserved.
           </p>
           <p className="text-xs text-slate-600">
             Crafted with ❤️ for travelers
