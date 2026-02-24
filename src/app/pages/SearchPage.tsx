@@ -10,8 +10,9 @@ import { Label } from "../components/ui/label";
 import { Slider } from "../components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../components/ui/sheet";
-import { MapPin, Star, Heart, Filter, SlidersHorizontal } from "lucide-react";
+import { MapPin, Star, Heart, Filter, SlidersHorizontal, Map, List } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { MapView } from "../components/MapView";
 
 export function SearchPage() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export function SearchPage() {
   const [minRating, setMinRating] = useState(0);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("price-low");
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const allAmenities = ["WiFi", "Parking", "Food", "Laundry"];
   const roomTypes = ["Single", "Double", "Dormitory"];
@@ -228,7 +230,7 @@ export function SearchPage() {
 
           <div className="flex items-center gap-4">
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[200px] rounded-xl border-slate-200">
+              <SelectTrigger className="w-[200px] rounded-xl border-slate-200 hidden md:flex">
                 <SlidersHorizontal className="size-4 mr-2" />
                 <SelectValue />
               </SelectTrigger>
@@ -239,6 +241,30 @@ export function SearchPage() {
                 <SelectItem value="availability">Availability</SelectItem>
               </SelectContent>
             </Select>
+
+            {/* View Toggle */}
+            <div className="flex bg-slate-100 p-1 rounded-xl">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${viewMode === "list"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+                  }`}
+              >
+                <List className="size-4" />
+                <span className="hidden sm:inline">List</span>
+              </button>
+              <button
+                onClick={() => setViewMode("map")}
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${viewMode === "map"
+                  ? "bg-white text-indigo-700 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+                  }`}
+              >
+                <Map className="size-4" />
+                <span className="hidden sm:inline">Map</span>
+              </button>
+            </div>
 
             {/* Mobile Filters */}
             <Sheet>
@@ -286,115 +312,121 @@ export function SearchPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 gap-5">
-              {filteredHostels.map((hostel) => (
-                <Card key={hostel.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-0 shadow-md hover:-translate-y-0.5">
-                  <div className="md:flex">
-                    {/* Image — only wishlist button overlays */}
-                    <div className="relative md:w-56 h-48 md:h-auto flex-shrink-0 overflow-hidden">
-                      <ImageWithFallback
-                        src={hostel.image}
-                        alt={hostel.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        onClick={() => toggleWishlist(hostel.id)}
-                        className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-white hover:scale-110 transition-all duration-300"
-                      >
-                        <Heart
-                          className={`size-5 ${wishlist.includes(hostel.id) ? "fill-rose-500 text-rose-500" : "text-slate-500"
-                            }`}
+            {viewMode === "map" ? (
+              <div className="w-full h-[calc(100vh-250px)] min-h-[600px] sticky top-20">
+                <MapView hostels={filteredHostels} />
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-5">
+                {filteredHostels.map((hostel) => (
+                  <Card key={hostel.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 rounded-2xl border-0 shadow-md hover:-translate-y-0.5">
+                    <div className="md:flex">
+                      {/* Image — only wishlist button overlays */}
+                      <div className="relative md:w-56 h-48 md:h-auto flex-shrink-0 overflow-hidden">
+                        <ImageWithFallback
+                          src={hostel.image}
+                          alt={hostel.name}
+                          className="w-full h-full object-cover"
                         />
-                      </button>
-                    </div>
-
-                    {/* All details in the card body */}
-                    <div className="flex-1 flex flex-col min-w-0">
-                      <CardHeader className="pb-2">
-                        <div className="flex items-center justify-between gap-2">
-                          <CardTitle className="truncate">{hostel.name}</CardTitle>
-                          <Badge className="flex-shrink-0 bg-indigo-50 text-indigo-700 border-0 font-semibold text-xs">
-                            {hostel.isAC ? "❄️ AC" : "🌿 Non-AC"}
-                          </Badge>
-                        </div>
-                        <CardDescription className="flex items-center gap-1">
-                          <MapPin className="size-4 flex-shrink-0" />
-                          {hostel.location}
-                        </CardDescription>
-                      </CardHeader>
-
-                      <CardContent className="flex-1 pb-2">
-                        {/* Rating */}
-                        <div className="flex items-center gap-1.5 mb-2">
-                          <div className="flex items-center gap-1 bg-amber-50 rounded-full px-2.5 py-0.5">
-                            <Star className="size-4 fill-amber-400 text-amber-400" />
-                            <span className="font-semibold text-amber-700 text-sm">{hostel.rating}</span>
-                          </div>
-                          <span className="text-slate-500 text-sm">
-                            ({hostel.reviews.length} reviews)
-                          </span>
-                        </div>
-
-                        {/* Availability */}
-                        <div className="mb-3">
-                          {hostel.availableRooms > 0 ? (
-                            hostel.availableRooms <= 3 ? (
-                              <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
-                                Only {hostel.availableRooms} rooms left
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
-                                {hostel.availableRooms} rooms available
-                              </Badge>
-                            )
-                          ) : (
-                            <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-xs">
-                              Sold Out
-                            </Badge>
-                          )}
-                        </div>
-
-                        {/* Amenities */}
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {hostel.amenities.slice(0, 3).map((amenity) => (
-                            <Badge key={amenity} variant="secondary" className="text-xs">
-                              {amenity}
-                            </Badge>
-                          ))}
-                        </div>
-
-                        {/* Price */}
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'var(--font-heading)' }}>₹{hostel.price}</span>
-                          <span className="text-sm text-slate-400">/night</span>
-                        </div>
-                      </CardContent>
-
-                      <CardFooter className="flex gap-2 pt-0">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`compare-${hostel.id}`}
-                            checked={compareList.includes(hostel.id)}
-                            onCheckedChange={() => toggleCompare(hostel.id)}
-                            disabled={!compareList.includes(hostel.id) && compareList.length >= 4}
-                          />
-                          <Label htmlFor={`compare-${hostel.id}`} className="text-sm cursor-pointer">
-                            Compare
-                          </Label>
-                        </div>
-                        <Button
-                          className="ml-auto rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 transition-all duration-300"
-                          onClick={() => navigate(`/hostel/${hostel.id}`)}
-                          disabled={hostel.availableRooms === 0}
+                        <button
+                          onClick={() => toggleWishlist(hostel.id)}
+                          className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-white hover:scale-110 transition-all duration-300"
                         >
-                          View Details
-                        </Button>
-                      </CardFooter>
+                          <Heart
+                            className={`size-5 ${wishlist.includes(hostel.id) ? "fill-rose-500 text-rose-500" : "text-slate-500"
+                              }`}
+                          />
+                        </button>
+                      </div>
+
+                      {/* All details in the card body */}
+                      <div className="flex-1 flex flex-col min-w-0">
+                        <CardHeader className="pb-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <CardTitle className="truncate">{hostel.name}</CardTitle>
+                            <Badge className="flex-shrink-0 bg-indigo-50 text-indigo-700 border-0 font-semibold text-xs">
+                              {hostel.isAC ? "❄️ AC" : "🌿 Non-AC"}
+                            </Badge>
+                          </div>
+                          <CardDescription className="flex items-center gap-1">
+                            <MapPin className="size-4 flex-shrink-0" />
+                            {hostel.location}
+                          </CardDescription>
+                        </CardHeader>
+
+                        <CardContent className="flex-1 pb-2">
+                          {/* Rating */}
+                          <div className="flex items-center gap-1.5 mb-2">
+                            <div className="flex items-center gap-1 bg-amber-50 rounded-full px-2.5 py-0.5">
+                              <Star className="size-4 fill-amber-400 text-amber-400" />
+                              <span className="font-semibold text-amber-700 text-sm">{hostel.rating}</span>
+                            </div>
+                            <span className="text-slate-500 text-sm">
+                              ({hostel.reviews.length} reviews)
+                            </span>
+                          </div>
+
+                          {/* Availability */}
+                          <div className="mb-3">
+                            {hostel.availableRooms > 0 ? (
+                              hostel.availableRooms <= 3 ? (
+                                <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200 text-xs">
+                                  Only {hostel.availableRooms} rooms left
+                                </Badge>
+                              ) : (
+                                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
+                                  {hostel.availableRooms} rooms available
+                                </Badge>
+                              )
+                            ) : (
+                              <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 text-xs">
+                                Sold Out
+                              </Badge>
+                            )}
+                          </div>
+
+                          {/* Amenities */}
+                          <div className="flex flex-wrap gap-1.5 mb-3">
+                            {hostel.amenities.slice(0, 3).map((amenity) => (
+                              <Badge key={amenity} variant="secondary" className="text-xs">
+                                {amenity}
+                              </Badge>
+                            ))}
+                          </div>
+
+                          {/* Price */}
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'var(--font-heading)' }}>₹{hostel.price}</span>
+                            <span className="text-sm text-slate-400">/night</span>
+                          </div>
+                        </CardContent>
+
+                        <CardFooter className="flex gap-2 pt-0">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`compare-${hostel.id}`}
+                              checked={compareList.includes(hostel.id)}
+                              onCheckedChange={() => toggleCompare(hostel.id)}
+                              disabled={!compareList.includes(hostel.id) && compareList.length >= 4}
+                            />
+                            <Label htmlFor={`compare-${hostel.id}`} className="text-sm cursor-pointer">
+                              Compare
+                            </Label>
+                          </div>
+                          <Button
+                            className="ml-auto rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 transition-all duration-300"
+                            onClick={() => navigate(`/hostel/${hostel.id}`)}
+                            disabled={hostel.availableRooms === 0}
+                          >
+                            View Details
+                          </Button>
+                        </CardFooter>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             {filteredHostels.length === 0 && (
               <Card className="p-12 text-center">

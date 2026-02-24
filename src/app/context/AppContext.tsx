@@ -13,6 +13,7 @@ interface Hostel {
   roomTypes: string[];
   distanceFromCenter: string;
   cancellationPolicy: string;
+  coordinates: [number, number]; // [latitude, longitude]
   description: string;
   images: string[];
   reviews: Review[];
