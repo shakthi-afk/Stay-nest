@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useApp } from "../context/AppContext";
-import { hostels } from "../data/hostels";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -11,11 +11,16 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 export function DashboardPage() {
   const navigate = useNavigate();
-  const { isLoggedIn, user, bookings, wishlist, setShowLoginModal } = useApp();
+  const { hostels, isLoggedIn, user, bookings, wishlist, setShowLoginModal } = useApp();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      navigate("/");
+    }
+  }, [isLoggedIn, setShowLoginModal, navigate]);
 
   if (!isLoggedIn) {
-    setShowLoginModal(true);
-    navigate("/");
     return null;
   }
 
@@ -64,7 +69,7 @@ export function DashboardPage() {
                             className="w-full h-full object-cover rounded-l-lg"
                           />
                         </div>
-                        
+
                         <div className="flex-1">
                           <CardHeader>
                             <div className="flex items-start justify-between">
@@ -80,40 +85,40 @@ export function DashboardPage() {
                               </Badge>
                             </div>
                           </CardHeader>
-                          
+
                           <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                               <div>
                                 <p className="text-sm text-gray-600">Booking ID</p>
                                 <p>{booking.id}</p>
                               </div>
-                              
+
                               <div>
                                 <p className="text-sm text-gray-600">Room Type</p>
                                 <p>{booking.roomType}</p>
                               </div>
-                              
+
                               <div>
                                 <p className="text-sm text-gray-600">Check-in</p>
                                 <p>{new Date(booking.checkIn).toLocaleDateString()}</p>
                               </div>
-                              
+
                               <div>
                                 <p className="text-sm text-gray-600">Check-out</p>
                                 <p>{new Date(booking.checkOut).toLocaleDateString()}</p>
                               </div>
-                              
+
                               <div>
                                 <p className="text-sm text-gray-600">Guests</p>
                                 <p>{booking.guests}</p>
                               </div>
-                              
+
                               <div>
                                 <p className="text-sm text-gray-600">Total Amount</p>
                                 <p className="text-xl">₹{booking.total}</p>
                               </div>
                             </div>
-                            
+
                             <div className="flex gap-2">
                               <Button variant="outline" onClick={() => navigate(`/hostel/${booking.hostelId}`)}>
                                 View Hostel
@@ -159,7 +164,7 @@ export function DashboardPage() {
                         {hostel.isAC ? "AC" : "Non-AC"}
                       </Badge>
                     </div>
-                    
+
                     <CardHeader>
                       <CardTitle>{hostel.name}</CardTitle>
                       <CardDescription className="flex items-center gap-1">
@@ -167,7 +172,7 @@ export function DashboardPage() {
                         {hostel.location}
                       </CardDescription>
                     </CardHeader>
-                    
+
                     <CardContent>
                       <div className="flex items-center justify-between mb-4">
                         <p>
@@ -184,7 +189,7 @@ export function DashboardPage() {
                           </Badge>
                         )}
                       </div>
-                      
+
                       <Button
                         className="w-full"
                         onClick={() => navigate(`/hostel/${hostel.id}`)}
@@ -215,9 +220,9 @@ export function DashboardPage() {
                     <p className="text-lg">{user?.name || "Guest User"}</p>
                   </div>
                 </div>
-                
+
                 <Separator />
-                
+
                 <div className="flex items-center gap-4">
                   <div className="bg-blue-100 rounded-full p-4">
                     <Mail className="size-8 text-blue-600" />
@@ -227,9 +232,9 @@ export function DashboardPage() {
                     <p className="text-lg">{user?.email || "guest@staynest.com"}</p>
                   </div>
                 </div>
-                
+
                 <Separator />
-                
+
                 <div className="flex items-center gap-4">
                   <div className="bg-blue-100 rounded-full p-4">
                     <Calendar className="size-8 text-blue-600" />
@@ -239,9 +244,9 @@ export function DashboardPage() {
                     <p className="text-lg">February 2026</p>
                   </div>
                 </div>
-                
+
                 <Separator />
-                
+
                 <div className="space-y-2">
                   <Button variant="outline" className="w-full">
                     Edit Profile

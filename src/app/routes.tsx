@@ -6,6 +6,8 @@ import { HostelDetailPage } from "./pages/HostelDetailPage";
 import { BookingPage } from "./pages/BookingPage";
 import { ConfirmationPage } from "./pages/ConfirmationPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { AdminPage } from "./pages/AdminPage";
+import { AdminLoginPage } from "./pages/AdminLoginPage";
 import { NotFound } from "./pages/NotFound";
 import { Layout } from "./components/Layout";
 
@@ -22,6 +24,13 @@ export const router = createBrowserRouter([
       { path: "confirmation", Component: ConfirmationPage },
       { path: "dashboard", Component: DashboardPage },
       { path: "*", Component: NotFound },
+    ],
+  },
+  {
+    path: "admin",
+    children: [
+      { index: true, Component: AdminPage },
+      { path: "login", Component: AdminLoginPage },
     ],
   },
 ]);

@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stay-nest — Project Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #111128;
+            --bg-card: rgba(255,255,255,0.04);
+            --text-primary: #f0f0ff;
+            --text-secondary: #a0a0c0;
+            --accent-1: #6c63ff;
+            --accent-2: #00d4aa;
+            --accent-3: #ff6b9d;
+            --accent-4: #ffd93d;
+            --gradient-1: linear-gradient(135deg, #6c63ff 0%, #00d4aa 100%);
+            --gradient-2: linear-gradient(135deg, #ff6b9d 0%, #ffd93d 100%);
+            --gradient-3: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0a0a1a 100%);
+            --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        html, body {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        /* ─── Slide Container ───────────────────────── */
+        .slides-wrapper {
+            width: 100%; height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 80px;
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1);
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: all;
+        }
+
+        /* ─── Background Decorations ──────────────── */
+        .slide::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .slide:nth-child(odd)::before {
+            background: var(--accent-1);
+            top: -200px; right: -200px;
+        }
+        .slide:nth-child(even)::before {
+            background: var(--accent-3);
+            bottom: -200px; left: -200px;
+        }
+
+        .slide > * { position: relative; z-index: 1; }
+
+        /* ─── Typography ──────────────────────────── */
+        .slide-number {
+            position: absolute;
+            top: 30px; left: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-2);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 3.6rem;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 12px;
+        }
+
+        h2 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--accent-2);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        .gradient-text {
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-text-2 {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── Cards & Containers ─────────────────── */
+        .content-grid {
+            display: grid;
+            gap: 24px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .content-grid.two-col { grid-template-columns: 1fr 1fr; }
+        .content-grid.three-col { grid-template-columns: 1fr 1fr 1fr; }
+        .content-grid.four-col { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(108,99,255,0.3);
+        }
+
+        .card .icon {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }
+
+        .card .icon.blue { background: rgba(108,99,255,0.15); }
+        .card .icon.green { background: rgba(0,212,170,0.15); }
+        .card .icon.pink { background: rgba(255,107,157,0.15); }
+        .card .icon.yellow { background: rgba(255,217,61,0.15); }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.65;
+        }
+
+        .card h3 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        /* ─── Bullet Points ──────────────────────── */
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 10px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 18px;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+        }
+
+        /* ─── Tags / Badges ──────────────────────── */
+        .tag {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin: 4px;
+        }
+
+        .tag.blue { background: rgba(108,99,255,0.15); color: #a09dff; }
+        .tag.green { background: rgba(0,212,170,0.15); color: #00d4aa; }
+        .tag.pink { background: rgba(255,107,157,0.15); color: #ff6b9d; }
+        .tag.yellow { background: rgba(255,217,61,0.15); color: #ffd93d; }
+        .tag.white { background: rgba(255,255,255,0.08); color: #ccc; }
+
+        /* ─── DFD Flow Diagram ───────────────────── */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1100px;
+        }
+
+        .flow-node {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 18px 24px;
+            text-align: center;
+            min-width: 140px;
+            backdrop-filter: blur(12px);
+        }
+
+        .flow-node .node-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .flow-node .node-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .flow-node .node-sub {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: var(--accent-1);
+            margin: 0 8px;
+            opacity: 0.6;
+        }
+
+        /* ─── Progress Bar ───────────────────────── */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: rgba(255,255,255,0.05);
+            z-index: 100;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--gradient-1);
+            transition: width 0.4s ease;
+        }
+
+        /* ─── Navigation ─────────────────────────── */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-1);
+            border-color: var(--accent-1);
+            transform: scale(1.1);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 38px;
+            left: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            z-index: 100;
+        }
+
+        .slide-counter span { color: var(--text-primary); font-weight: 700; }
+
+        /* ─── Title Slide Specific ────────────────── */
+        .title-slide {
+            text-align: center;
+        }
+
+        .title-slide .logo {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--accent-2);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .title-slide .logo::before,
+        .title-slide .logo::after {
+            content: '';
+            width: 40px; height: 1px;
+            background: var(--accent-2);
+            opacity: 0.4;
+        }
+
+        .title-slide h1 {
+            font-size: 4.8rem;
+            margin-bottom: 20px;
+        }
+
+        .title-slide .meta {
+            margin-top: 40px;
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .title-slide .meta strong {
+            color: var(--text-primary);
+        }
+
+        .title-slide .start-hint {
+            margin-top: 48px;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.25);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        /* ─── Slide Content Alignment ────────────── */
+        .slide-content {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .slide-header {
+            margin-bottom: 40px;
+        }
+
+        .slide-header .tag {
+            margin-bottom: 12px;
+        }
+
+        /* ─── Table Style ────────────────────────── */
+        .styled-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            font-size: 0.9rem;
+        }
+
+        .styled-table th {
+            text-align: left;
+            padding: 12px 20px;
+            color: var(--accent-2);
+            font-weight: 600;
+            font-size: 0.78rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .styled-table td {
+            padding: 14px 20px;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .styled-table tr td:first-child {
+            border-radius: 10px 0 0 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .styled-table tr td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* ─── Tech Stack Row ─────────────────────── */
+        .tech-stack-visual {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .tech-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 20px 28px;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            min-width: 100px;
+            transition: transform 0.3s;
+        }
+
+        .tech-item:hover { transform: translateY(-6px); }
+
+        .tech-item .tech-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .tech-item .tech-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .tech-item .tech-role {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* ─── Conclusion Checkmarks ──────────────── */
+        .achievement-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .achievement-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 14px 0;
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .achievement-list li .check {
+            flex-shrink: 0;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: rgba(0,212,170,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--accent-2);
+            margin-top: 2px;
+        }
+
+        /* ─── Two Column Layout ──────────────────── */
+        .two-col-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: start;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        /* ─── DFD Vertical ───────────────────────── */
+        .dfd-container {
+            display: flex;
+            gap: 48px;
+            align-items: flex-start;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .dfd-left { flex: 1.2; }
+        .dfd-right { flex: 1; }
+
+        .dfd-flow-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .dfd-node {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 14px 24px;
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .dfd-node .dfd-label {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .dfd-node .dfd-detail {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .dfd-arrow-down {
+            font-size: 20px;
+            color: var(--accent-1);
+            opacity: 0.5;
+        }
+
+        .dfd-node.highlight {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 20px rgba(108,99,255,0.15);
+        }
+
+        /* ─── Fullscreen hint ────────────────────── */
+        .fullscreen-hint {
+            position: fixed;
+            top: 24px;
+            right: 40px;
+            z-index: 100;
+        }
+
+        .fullscreen-btn {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .fullscreen-btn:hover {
+            background: var(--accent-1);
+            color: #fff;
+            border-color: var(--accent-1);
+        }
+
+        /* ─── Thank You Slide ────────────────────── */
+        .thank-you h1 {
+            font-size: 5rem;
+        }
+
+        .thank-you .contact-row {
+            display: flex;
+            gap: 32px;
+            margin-top: 30px;
+        }
+
+        .thank-you .contact-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 12px;
+            padding: 16px 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .thank-you .contact-item .label {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .thank-you .contact-item .value {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        /* Animated border glow */
+        .glow-border {
+            position: relative;
+        }
+        .glow-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 17px;
+            background: var(--gradient-1);
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(1px);
+        }
+
+        /* Keyboard shortcut hint */
+        .kbd {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.08);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar"><div class="fill" id="progressFill"></div></div>
+
+<!-- Fullscreen Button -->
+<div class="fullscreen-hint">
+    <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+</div>
+
+<!-- Slide Counter -->
+<div class="slide-counter"><span id="currentSlide">1</span> / <span id="totalSlides">10</span></div>
+
+<!-- Navigation -->
+<div class="nav-controls">
+    <button class="nav-btn" onclick="prevSlide()">◀</button>
+    <button class="nav-btn" onclick="nextSlide()">▶</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                          SLIDES                           -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="slides-wrapper">
+
+    <!-- ─── SLIDE 1: Title ────────────────────────────────── -->
+    <div class="slide active title-slide">
+        <div class="logo">Stay-nest</div>
+        <h1><span class="gradient-text">Advanced Hostel</span><br>Booking Platform</h1>
+        <p class="subtitle">A Full-Stack MERN Application for Intelligent Hostel Discovery, Booking & Management</p>
+        <div class="meta">
+            <div><strong>Technology</strong><br>React · Node.js · MongoDB</div>
+            <div><strong>Type</strong><br>Full-Stack Web Application</div>
+            <div><strong>Duration</strong><br>5-Minute Overview</div>
+        </div>
+        <p class="start-hint">Press <span class="kbd">→</span> or click ▶ to begin</p>
+    </div>
+
+    <!-- ─── SLIDE 2: Abstract ─────────────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">01 — Abstract</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag blue">Project Overview</span>
+                <h2>Abstract</h2>
+            </div>
+            <div class="two-col-layout">
+                <div>
+                    <p class="subtitle" style="max-width:100%; font-size:1rem; margin-bottom:24px;">
+                        <strong style="color:var(--text-primary)">Stay-nest</strong> is a comprehensive full-stack web application built using the <strong style="color:var(--accent-1)">MERN Stack</strong> (MongoDB, Express, React, Node.js) that addresses the challenges of hostel discovery and booking.
+                    </p>
+                    <p class="subtitle" style="max-width:100%; font-size:0.95rem; margin-bottom:24px;">
+                        The platform integrates <strong style="color:var(--accent-2)">interactive mapping</strong> (Leaflet.js), <strong style="color:var(--accent-2)">real-time search</strong>, and <strong style="color:var(--accent-2)">Google Places API sync</strong> to deliver a premium hostel booking experience for students, travelers, and budget-conscious users.
+                    </p>
+                    <ul class="bullet-list">
+                        <li>Split-screen map-based search with geocoding</li>
+                        <li>Admin panel with full CRUD & bulk data sync</li>
+                        <li>Multi-step booking flow with user dashboard</li>
+                        <li>Responsive glassmorphism UI design</li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="card glow-border" style="margin-bottom:16px;">
+                        <h3 style="color:var(--accent-3);">🎯 Problem Solved</h3>
+                        <p>Fragmented hostel listings, unreliable data, lack of location verification, and poor user experience in existing accommodation platforms.</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="color:var(--accent-4);">💡 Key Innovation</h3>
+                        <p>Coordinate-based listings with interactive map synchronization ensuring what users see on-screen is an accurate geographic representation.</p>
+                    </div>
+                    <div class="tech-stack-visual" style="margin-top:20px;">
+                        <div class="tech-item">
+                            <div class="tech-icon">⚛️</div>
+                            <div class="tech-name">React 18</div>
+                            <div class="tech-role">Frontend</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">🟢</div>
+                            <div class="tech-name">Node.js</div>
+                            <div class="tech-role">Backend</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">🍃</div>
+                            <div class="tech-name">MongoDB</div>
+                            <div class="tech-role">Database</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-icon">🗺️</div>
+                            <div class="tech-name">Leaflet</div>
+                            <div class="tech-role">Maps</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 3: System Architecture ──────────────────── -->
+    <div class="slide">
+        <div class="slide-number">02 — Architecture</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag green">System Design</span>
+                <h2>System Architecture</h2>
+                <p class="subtitle" style="font-size:1rem;">Decoupled MERN Stack with three-tier design</p>
+            </div>
+            <div class="content-grid three-col">
+                <div class="card" style="border-top: 3px solid var(--accent-1);">
+                    <div class="icon blue">🎨</div>
+                    <h3>Presentation Layer</h3>
+                    <p><strong style="color:var(--text-primary)">React 18</strong> with Vite 6.0 build engine. Handles UI rendering, routing (React Router 6), global state (Context API), and interactive maps (Leaflet.js).</p>
+                    <div style="margin-top:14px;">
+                        <span class="tag blue">React</span>
+                        <span class="tag blue">Vite</span>
+                        <span class="tag blue">Tailwind</span>
+                        <span class="tag blue">Leaflet</span>
+                    </div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--accent-2);">
+                    <div class="icon green">⚙️</div>
+                    <h3>Logic Layer</h3>
+                    <p><strong style="color:var(--text-primary)">Node.js + Express</strong> server with RESTful API endpoints. Handles data validation, CORS, Google Places API integration, and middleware processing.</p>
+                    <div style="margin-top:14px;">
+                        <span class="tag green">Express</span>
+                        <span class="tag green">REST API</span>
+                        <span class="tag green">Axios</span>
+                        <span class="tag green">CORS</span>
+                    </div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--accent-3);">
+                    <div class="icon pink">🗄️</div>
+                    <h3>Data Layer</h3>
+                    <p><strong style="color:var(--text-primary)">MongoDB</strong> with Mongoose ODM. Stores hostel documents with geospatial indexing, booking records, and user sessions. Flexible NoSQL schema.</p>
+                    <div style="margin-top:14px;">
+                        <span class="tag pink">MongoDB</span>
+                        <span class="tag pink">Mongoose</span>
+                        <span class="tag pink">BSON</span>
+                        <span class="tag pink">GeoIndex</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 4: DFD – Search Flow ────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">03 — Data Flow Diagram</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag pink">DFD</span>
+                <h2>Data Flow Diagram</h2>
+                <p class="subtitle" style="font-size:1rem;">How data moves through the system</p>
+            </div>
+            <div class="dfd-container">
+                <div class="dfd-left">
+                    <h3 style="margin-bottom:16px;">🔍 Search & Booking Flow</h3>
+                    <div class="dfd-flow-vertical">
+                        <div class="dfd-node">
+                            <div class="dfd-label">👤 User</div>
+                            <div class="dfd-detail">Enters city name / search query</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">🌐 React Frontend</div>
+                            <div class="dfd-detail">Geocoding via Nominatim API → coordinates</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node highlight">
+                            <div class="dfd-label">📡 Axios GET /api/hostels</div>
+                            <div class="dfd-detail">HTTP request with location params</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">⚙️ Express Server</div>
+                            <div class="dfd-detail">Route handler → Mongoose .find()</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">🍃 MongoDB</div>
+                            <div class="dfd-detail">Geospatial query → JSON documents</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">🗺️ UI Update</div>
+                            <div class="dfd-detail">Map markers + listing cards rendered</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dfd-right">
+                    <h3 style="margin-bottom:16px;">🔐 Admin Sync Flow</h3>
+                    <div class="dfd-flow-vertical">
+                        <div class="dfd-node">
+                            <div class="dfd-label">👨‍💼 Admin</div>
+                            <div class="dfd-detail">Enters city for bulk sync</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node highlight">
+                            <div class="dfd-label">📡 POST /api/sync/google</div>
+                            <div class="dfd-detail">Sync request with city name</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">🌍 Google Places API</div>
+                            <div class="dfd-detail">Fetches real hostel data (or mock fallback)</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">⚙️ Data Cleaning</div>
+                            <div class="dfd-detail">Maps external data → Mongoose model</div>
+                        </div>
+                        <div class="dfd-arrow-down">▼</div>
+                        <div class="dfd-node">
+                            <div class="dfd-label">🍃 MongoDB Insert</div>
+                            <div class="dfd-detail">Bulk upsert to Hostels collection</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 5: Module 1 & 2 ─────────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">04 — Modules</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag yellow">Module Description</span>
+                <h2>Core Modules <span class="gradient-text-2">(1/2)</span></h2>
+            </div>
+            <div class="content-grid two-col">
+                <div class="card" style="border-left: 4px solid var(--accent-1);">
+                    <div class="icon blue">🏠</div>
+                    <h3>1. Home & Landing Module</h3>
+                    <p style="margin-bottom:12px;">The entry point featuring a hero section with glassmorphism search widget, featured hostel carousel, and dynamic city highlights.</p>
+                    <ul class="bullet-list">
+                        <li>Multi-parameter search (City, Date, Guests)</li>
+                        <li>Animated hostel card grid with hover effects</li>
+                        <li>Responsive design from mobile to 4K</li>
+                    </ul>
+                    <div style="margin-top:12px;">
+                        <span class="tag white">HomePage.tsx</span>
+                        <span class="tag white">Header.tsx</span>
+                        <span class="tag white">Footer.tsx</span>
+                    </div>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-2);">
+                    <div class="icon green">🔍</div>
+                    <h3>2. Search & Map Module</h3>
+                    <p style="margin-bottom:12px;">Split-screen discovery engine with synchronized listing sidebar and interactive Leaflet map. Real-time filtering with geocoding.</p>
+                    <ul class="bullet-list">
+                        <li>60/40 split-screen layout (cards + map)</li>
+                        <li>Custom circular markers with interaction</li>
+                        <li>Nominatim geocoding for text → coordinates</li>
+                    </ul>
+                    <div style="margin-top:12px;">
+                        <span class="tag white">SearchPage.tsx</span>
+                        <span class="tag white">MapView.tsx</span>
+                        <span class="tag white">ComparePage.tsx</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 6: Module 3 & 4 ─────────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">05 — Modules</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag yellow">Module Description</span>
+                <h2>Core Modules <span class="gradient-text-2">(2/2)</span></h2>
+            </div>
+            <div class="content-grid two-col">
+                <div class="card" style="border-left: 4px solid var(--accent-3);">
+                    <div class="icon pink">📋</div>
+                    <h3>3. Booking & Detail Module</h3>
+                    <p style="margin-bottom:12px;">Deep-dive property pages with image galleries, amenity grids, and a secure multi-step booking flow with date validation.</p>
+                    <ul class="bullet-list">
+                        <li>Property detail with image carousel</li>
+                        <li>Date-picker with check-in/out validation</li>
+                        <li>Price calculation & booking confirmation</li>
+                        <li>User dashboard with booking history</li>
+                    </ul>
+                    <div style="margin-top:12px;">
+                        <span class="tag white">HostelDetailPage.tsx</span>
+                        <span class="tag white">BookingPage.tsx</span>
+                        <span class="tag white">DashboardPage.tsx</span>
+                    </div>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--accent-4);">
+                    <div class="icon yellow">🛡️</div>
+                    <h3>4. Admin Management Module</h3>
+                    <p style="margin-bottom:12px;">Role-based admin panel with secure login, full CRUD operations, bulk Google Places data sync, and real-time inventory management.</p>
+                    <ul class="bullet-list">
+                        <li>Secure admin authentication</li>
+                        <li>Add/Edit/Delete hostel listings</li>
+                        <li>Google Places API sync with mock fallback</li>
+                        <li>Map-based coordinate picker for accuracy</li>
+                    </ul>
+                    <div style="margin-top:12px;">
+                        <span class="tag white">AdminPage.tsx</span>
+                        <span class="tag white">AdminLoginPage.tsx</span>
+                        <span class="tag white">LoginModal.tsx</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 7: Backend Module ───────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">06 — Modules</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag green">Backend & Data</span>
+                <h2>Backend Module & Database Design</h2>
+            </div>
+            <div class="dfd-container">
+                <div class="dfd-left">
+                    <h3 style="color:var(--accent-1); margin-bottom: 16px;">5. RESTful API Server</h3>
+                    <div class="card" style="margin-bottom:16px;">
+                        <p><strong style="color:var(--text-primary)">Express.js</strong> server with modular route handlers for all platform operations.</p>
+                    </div>
+                    <table class="styled-table">
+                        <thead>
+                            <tr><th>Endpoint</th><th>Method</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>/api/hostels</td><td>GET</td><td>Fetch all hostels</td></tr>
+                            <tr><td>/api/hostels/:id</td><td>DELETE</td><td>Remove listing</td></tr>
+                            <tr><td>/api/hostels</td><td>POST</td><td>Add new hostel</td></tr>
+                            <tr><td>/api/bookings</td><td>POST</td><td>Create booking</td></tr>
+                            <tr><td>/api/sync/google</td><td>POST</td><td>Bulk data sync</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dfd-right">
+                    <h3 style="color:var(--accent-3); margin-bottom: 16px;">Database Schema</h3>
+                    <div class="card" style="margin-bottom:14px; border-left: 3px solid var(--accent-1);">
+                        <h3 style="font-size:0.95rem; color:var(--accent-1);">📄 Hostel Document</h3>
+                        <p style="font-family:'JetBrains Mono',monospace; font-size:0.78rem; line-height:1.8; margin-top:8px;">
+                            name: String<br>
+                            location: String<br>
+                            coordinates: [Lat, Lng]<br>
+                            price: Number<br>
+                            rating: Number (0-5)<br>
+                            amenities: [String]<br>
+                            images: [String]<br>
+                            isAC: Boolean<br>
+                            availableRooms: Number
+                        </p>
+                    </div>
+                    <div class="card" style="border-left: 3px solid var(--accent-3);">
+                        <h3 style="font-size:0.95rem; color:var(--accent-3);">📄 Booking Document</h3>
+                        <p style="font-family:'JetBrains Mono',monospace; font-size:0.78rem; line-height:1.8; margin-top:8px;">
+                            userId: String<br>
+                            hostelId: ObjectId (ref)<br>
+                            checkIn / checkOut: Date<br>
+                            total: Number<br>
+                            status: Enum<br>
+                            roomType: String
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 8: Technology Stack ─────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">07 — Tech Stack</div>
+        <div class="slide-content" style="text-align:center;">
+            <div class="slide-header" style="text-align:center;">
+                <span class="tag blue">Technologies Used</span>
+                <h2>Technology Stack</h2>
+            </div>
+            <div class="content-grid four-col" style="max-width:1000px; margin: 0 auto;">
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">⚛️</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">React 18</h3>
+                    <p style="font-size:0.82rem;">Concurrent rendering, hooks, Context API, React Router 6</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">🟢</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">Node.js</h3>
+                    <p style="font-size:0.82rem;">Event-driven, non-blocking I/O with Express.js middleware</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">🍃</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">MongoDB</h3>
+                    <p style="font-size:0.82rem;">NoSQL document store with Mongoose ODM & geospatial indexes</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">⚡</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">Vite 6.0</h3>
+                    <p style="font-size:0.82rem;">Lightning-fast HMR, ESM-native build engine</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">🗺️</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">Leaflet.js</h3>
+                    <p style="font-size:0.82rem;">Open-source interactive maps with OpenStreetMap tiles</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">🎨</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">TailwindCSS</h3>
+                    <p style="font-size:0.82rem;">Utility-first CSS framework for rapid UI development</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">📡</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">Axios</h3>
+                    <p style="font-size:0.82rem;">Promise-based HTTP client with interceptor support</p>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <div style="font-size:40px; margin-bottom:12px;">🌍</div>
+                    <h3 style="color:var(--text-primary); font-size:1rem;">Google Places</h3>
+                    <p style="font-size:0.82rem;">Real-world hostel data sync with mock fallback</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 9: Testing & Results ────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">08 — Testing</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag pink">Quality Assurance</span>
+                <h2>Testing & Results</h2>
+            </div>
+            <table class="styled-table" style="max-width:1100px;">
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Area</th>
+                        <th>Scenario</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TS-001</td>
+                        <td>Authentication</td>
+                        <td>Valid admin login → redirects to Admin Panel</td>
+                        <td><span class="tag green">✓ PASS</span></td>
+                    </tr>
+                    <tr>
+                        <td>TS-002</td>
+                        <td>Sync Engine</td>
+                        <td>Google Places sync populates DB in &lt;2s</td>
+                        <td><span class="tag green">✓ PASS</span></td>
+                    </tr>
+                    <tr>
+                        <td>TS-003</td>
+                        <td>Search</td>
+                        <td>City search filters results in &lt;500ms</td>
+                        <td><span class="tag green">✓ PASS</span></td>
+                    </tr>
+                    <tr>
+                        <td>TS-004</td>
+                        <td>Booking</td>
+                        <td>Price calculation & booking record creation</td>
+                        <td><span class="tag green">✓ PASS</span></td>
+                    </tr>
+                    <tr>
+                        <td>TS-005</td>
+                        <td>CRUD</td>
+                        <td>Admin delete removes item from DB & UI</td>
+                        <td><span class="tag green">✓ PASS</span></td>
+                    </tr>
+                    <tr>
+                        <td>TS-006</td>
+                        <td>Edge Case</td>
+                        <td>Invalid date range blocked by validation</td>
+                        <td><span class="tag green">✓ PASS</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top: 28px; display: flex; gap: 20px; justify-content: center;">
+                <div class="card" style="text-align:center; padding: 20px 32px;">
+                    <div style="font-size: 2rem; font-weight: 900; color: var(--accent-2);">6/6</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Tests Passed</div>
+                </div>
+                <div class="card" style="text-align:center; padding: 20px 32px;">
+                    <div style="font-size: 2rem; font-weight: 900; color: var(--accent-2);">100%</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Pass Rate</div>
+                </div>
+                <div class="card" style="text-align:center; padding: 20px 32px;">
+                    <div style="font-size: 2rem; font-weight: 900; color: var(--accent-1);">4</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">Testing Phases</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 10: Conclusion ──────────────────────────── -->
+    <div class="slide">
+        <div class="slide-number">09 — Conclusion</div>
+        <div class="slide-content">
+            <div class="slide-header">
+                <span class="tag green">Summary</span>
+                <h2>Conclusion</h2>
+            </div>
+            <div class="two-col-layout">
+                <div>
+                    <h3 style="color:var(--accent-1); margin-bottom:20px;">✅ Key Achievements</h3>
+                    <ul class="achievement-list">
+                        <li>
+                            <span class="check">✓</span>
+                            <span><strong style="color:var(--text-primary)">Zero-Friction Search</strong> — Geocoding + split-screen map delivers instant, location-aware hostel discovery.</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span><strong style="color:var(--text-primary)">Data Sustainability</strong> — Google Places sync with intelligent mock fallback ensures reliable data population.</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span><strong style="color:var(--text-primary)">Premium UI/UX</strong> — Glassmorphism design, responsive layouts, and smooth animations create a modern experience.</span>
+                        </li>
+                        <li>
+                            <span class="check">✓</span>
+                            <span><strong style="color:var(--text-primary)">Full-Stack MERN</strong> — Scalable architecture ready for production deployment and future expansion.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color:var(--accent-3); margin-bottom:20px;">🚀 Future Enhancements</h3>
+                    <div class="card" style="margin-bottom:12px;">
+                        <h3 style="font-size:0.9rem;">💬 Real-Time Chat</h3>
+                        <p>Socket.io integration for user-owner messaging</p>
+                    </div>
+                    <div class="card" style="margin-bottom:12px;">
+                        <h3 style="font-size:0.9rem;">💳 Payment Gateway</h3>
+                        <p>Stripe Connect for live financial transactions</p>
+                    </div>
+                    <div class="card" style="margin-bottom:12px;">
+                        <h3 style="font-size:0.9rem;">📍 Geofencing</h3>
+                        <p>Auto check-in notifications via proximity detection</p>
+                    </div>
+                    <div class="card">
+                        <h3 style="font-size:0.9rem;">🌐 Multi-Language</h3>
+                        <p>i18next localization for international travelers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SLIDE 11: Thank You ───────────────────────────── -->
+    <div class="slide title-slide thank-you">
+        <div class="logo">Stay-nest</div>
+        <h1><span class="gradient-text">Thank You!</span></h1>
+        <p class="subtitle">Questions & Discussion</p>
+        <div class="contact-row">
+            <div class="contact-item">
+                <div class="label">Project</div>
+                <div class="value">Stay-nest: Hostel Booking Platform</div>
+            </div>
+            <div class="contact-item">
+                <div class="label">Tech Stack</div>
+                <div class="value">React · Node.js · MongoDB · Leaflet</div>
+            </div>
+            <div class="contact-item">
+                <div class="label">Repository</div>
+                <div class="value">github.com/shakthi-afk/Stay-nest</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+
+    document.getElementById('totalSlides').textContent = total;
+
+    function showSlide(n) {
+        slides.forEach(s => s.classList.remove('active'));
+        current = ((n % total) + total) % total;
+        slides[current].classList.add('active');
+        document.getElementById('currentSlide').textContent = current + 1;
+        document.getElementById('progressFill').style.width = ((current + 1) / total * 100) + '%';
+    }
+
+    function nextSlide() { showSlide(current + 1); }
+    function prevSlide() { showSlide(current - 1); }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); nextSlide(); }
+        if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); prevSlide(); }
+        if (e.key === 'Home') { e.preventDefault(); showSlide(0); }
+        if (e.key === 'End') { e.preventDefault(); showSlide(total - 1); }
+        if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+        const diff = e.changedTouches[0].screenX - touchStartX;
+        if (Math.abs(diff) > 50) { diff < 0 ? nextSlide() : prevSlide(); }
+    });
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
+    showSlide(0);
+</script>
+
+</body>
+</html>

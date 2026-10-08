@@ -6,32 +6,52 @@ import { Hostel } from '../context/AppContext';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Link } from 'react-router';
 import { Button } from './ui/button';
-import { Star } from 'lucide-react';
+import { Star, Search, X } from 'lucide-react';
+import { Input } from './ui/input';
+import { useState } from 'react';
 
-// Fix for default marker icons in React-Leaflet
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+// Custom Marker Icon based on the screenshot (Dark blue circle with white border)
+const customIcon = L.divIcon({
+    html: `<div class="w-8 h-8 bg-[#003580] rounded-full border-2 border-white flex items-center justify-center shadow-lg transform -translate-x-1/2 -translate-y-1/2">
+             <div class="w-2 h-2 bg-white rounded-full"></div>
+           </div>`,
+    className: '',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -16]
 });
 
-L.Marker.prototype.options.icon = DefaultIcon;
-
-// Component to handle map center changes
-function MapCenterUpdater({ center }: { center: [number, number] }) {
+// Component to handle map center changes and bounds
+function MapViewUpdater({ hostels, searchResult }: { hostels: Hostel[], searchResult: [number, number] | null }) {
     const map = useMap();
+
     useEffect(() => {
-        map.setView(center, map.getZoom(), {
-            animate: true,
-            duration: 1
-        });
-    }, [center, map]);
+        if (hostels.length > 0) {
+            if (hostels.length === 1) {
+                map.setView(hostels[0].coordinates, 13, {
+                    animate: true,
+                    duration: 1
+                });
+            } else {
+                const bounds = L.latLngBounds(hostels.map(h => h.coordinates));
+                map.fitBounds(bounds, {
+                    padding: [50, 50],
+                    maxZoom: 15,
+                    animate: true,
+                    duration: 1
+                });
+            }
+            return;
+        }
+
+        if (searchResult) {
+            map.setView(searchResult, 13, {
+                animate: true,
+                duration: 1
+            });
+        }
+    }, [hostels, map, searchResult]);
+
     return null;
 }
 
@@ -39,26 +59,100 @@ interface MapViewProps {
     hostels: Hostel[];
     center?: [number, number];
     zoom?: number;
+    searchedLocation?: string;
 }
 
-export function MapView({ hostels, center = [13.0475, 80.2824], zoom = 6 }: MapViewProps) {
-    // If there are hostels, set center to the first one, else use default (Chennai)
-    const mapCenter = hostels.length > 0 ? hostels[0].coordinates : center;
+export function MapView({ hostels, center = [13.0475, 80.2824], zoom = 6, searchedLocation }: MapViewProps) {
+    const [mapSearch, setMapSearch] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchResult, setSearchResult] = useState<[number, number] | null>(null);
+
+    // Geocode searched location from homepage or search bar
+    useEffect(() => {
+        if (!searchedLocation) {
+            setSearchResult(null);
+            return;
+        }
+
+        const geocodeSearchedLocation = async () => {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchedLocation + ", India")}&limit=1`);
+                const data = await response.json();
+                if (data && data.length > 0) {
+                    const { lat, lon } = data[0];
+                    setSearchResult([parseFloat(lat), parseFloat(lon)]);
+                }
+            } catch (err) {
+                console.error("Geocoding search location error in MapView:", err);
+            }
+        };
+
+        geocodeSearchedLocation();
+    }, [searchedLocation]);
+
+    const handleMapSearch = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!mapSearch) return;
+
+        setIsSearching(true);
+        try {
+            // Use Nominatim for free geocoding
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(mapSearch)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                setSearchResult([parseFloat(lat), parseFloat(lon)]);
+            }
+        } catch (err) {
+            console.error("Geocoding error", err);
+        } finally {
+            setIsSearching(false);
+        }
+    };
 
     return (
-        <div className="w-full h-full min-h-[600px] rounded-2xl overflow-hidden shadow-lg border border-slate-200">
+        <div className="w-full h-full relative group shadow-sm bg-slate-50">
+            {/* Search on map overlay */}
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] w-full max-w-md px-4">
+                <form onSubmit={handleMapSearch} className="relative drop-shadow-2xl">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                        <Search className="size-4" />
+                    </div>
+                    <Input
+                        value={mapSearch}
+                        onChange={(e) => setMapSearch(e.target.value)}
+                        placeholder="Search on map"
+                        className="pl-10 pr-10 h-10 bg-white/95 backdrop-blur-sm border-0 rounded-lg shadow-lg focus-visible:ring-indigo-600 transition-all font-medium text-slate-900"
+                    />
+                    {mapSearch && (
+                        <button
+                            type="button"
+                            onClick={() => setMapSearch('')}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                            <X className="size-4" />
+                        </button>
+                    )}
+                </form>
+            </div>
+
             <MapContainer
-                center={mapCenter}
+                center={center}
                 zoom={zoom}
-                style={{ height: '100%', width: '100%', minHeight: '600px' }}
+                style={{ height: '100%', width: '100%' }}
+                zoomControl={false} // Hide default to place it elsewhere or just for cleaner look
             >
-                <MapCenterUpdater center={mapCenter} />
+                <MapViewUpdater hostels={hostels} searchResult={searchResult} />
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {hostels.map((hostel) => (
-                    <Marker key={hostel.id} position={hostel.coordinates}>
+                    <Marker
+                        key={hostel.id}
+                        position={hostel.coordinates}
+                        icon={customIcon}
+                    >
                         <Popup className="staynest-popup" minWidth={250} maxWidth={300}>
                             <div className="flex flex-col gap-2 overflow-hidden rounded-xl border-0 !m-0 !p-0">
                                 <div className="h-32 w-full relative">

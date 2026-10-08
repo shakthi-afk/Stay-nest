@@ -20,3 +20,11 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Temp / generated files
+output.txt
+coords_report.json
+*.pptx
+
+# Server env
+server/.env

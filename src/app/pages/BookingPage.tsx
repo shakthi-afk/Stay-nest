@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router";
 import { useApp } from "../context/AppContext";
-import { hostels } from "../data/hostels";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -16,8 +15,8 @@ export function BookingPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { addBooking, searchParams: search, isLoggedIn, user, setShowLoginModal } = useApp();
-  
+  const { hostels, addBooking, searchParams: search, isLoggedIn, user, setShowLoginModal } = useApp();
+
   const roomType = searchParams.get("roomType") || "ac";
   const hostel = hostels.find((h) => h.id === id);
 
@@ -28,6 +27,7 @@ export function BookingPage() {
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [promoCode, setPromoCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   if (!hostel) {
     return (
@@ -42,19 +42,24 @@ export function BookingPage() {
     );
   }
 
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setShowLoginModal(true);
+      navigate(`/hostel/${id}`);
+    }
+  }, [isLoggedIn, setShowLoginModal, navigate, id]);
+
   if (!isLoggedIn) {
-    setShowLoginModal(true);
-    navigate(`/hostel/${id}`);
     return null;
   }
 
   const basePrice = roomType === "ac" ? hostel.price : Math.round(hostel.price * 0.7);
   const checkInDate = search.checkIn || new Date().toISOString().split('T')[0];
   const checkOutDate = search.checkOut || new Date(Date.now() + 86400000).toISOString().split('T')[0];
-  
+
   // Calculate number of nights
   const nights = Math.max(1, Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / 86400000));
-  
+
   const subtotal = basePrice * nights;
   const taxes = Math.round(subtotal * 0.12); // 12% GST
   const total = subtotal + taxes - discount;
@@ -71,11 +76,41 @@ export function BookingPage() {
     }
   };
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!guestName) newErrors.guestName = "Full name is required";
+    if (!guestEmail) {
+      newErrors.guestEmail = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(guestEmail)) {
+      newErrors.guestEmail = "Invalid email format";
+    }
+    if (!guestPhone) newErrors.guestPhone = "Phone number is required";
+
+    if (paymentMethod === "card") {
+      if (!document.getElementById("cardNumber") || !(document.getElementById("cardNumber") as HTMLInputElement).value) {
+        newErrors.cardNumber = "Card number is required";
+      }
+      if (!document.getElementById("expiry") || !(document.getElementById("expiry") as HTMLInputElement).value) {
+        newErrors.expiry = "Expiry date is required";
+      }
+      if (!document.getElementById("cvv") || !(document.getElementById("cvv") as HTMLInputElement).value) {
+        newErrors.cvv = "CVV is required";
+      }
+    } else if (paymentMethod === "upi") {
+      if (!document.getElementById("upiId") || !(document.getElementById("upiId") as HTMLInputElement).value) {
+        newErrors.upiId = "UPI ID is required";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleBooking = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!guestName || !guestEmail || !guestPhone) {
-      toast.error("Please fill in all required fields");
+    if (!validate()) {
+      toast.error("Please fix the errors in the form");
       return;
     }
 
@@ -123,42 +158,57 @@ export function BookingPage() {
                 <form onSubmit={handleBooking} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name">Full Name *</Label>
+                      <Label htmlFor="name" className={errors.guestName ? "text-red-500" : ""}>Full Name *</Label>
                       <Input
                         id="name"
                         value={guestName}
-                        onChange={(e) => setGuestName(e.target.value)}
+                        onChange={(e) => {
+                          setGuestName(e.target.value);
+                          if (errors.guestName) setErrors(prev => ({ ...prev, guestName: "" }));
+                        }}
                         placeholder="John Doe"
+                        className={errors.guestName ? "border-red-500 focus-visible:ring-red-500" : ""}
                         required
                       />
+                      {errors.guestName && <p className="text-xs text-red-500 mt-1">{errors.guestName}</p>}
                     </div>
-                    
+
                     <div>
-                      <Label htmlFor="email">Email *</Label>
+                      <Label htmlFor="email" className={errors.guestEmail ? "text-red-500" : ""}>Email *</Label>
                       <Input
                         id="email"
                         type="email"
                         value={guestEmail}
-                        onChange={(e) => setGuestEmail(e.target.value)}
+                        onChange={(e) => {
+                          setGuestEmail(e.target.value);
+                          if (errors.guestEmail) setErrors(prev => ({ ...prev, guestEmail: "" }));
+                        }}
                         placeholder="john@example.com"
+                        className={errors.guestEmail ? "border-red-500 focus-visible:ring-red-500" : ""}
                         required
                       />
+                      {errors.guestEmail && <p className="text-xs text-red-500 mt-1">{errors.guestEmail}</p>}
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Label htmlFor="phone" className={errors.guestPhone ? "text-red-500" : ""}>Phone Number *</Label>
                       <Input
                         id="phone"
                         type="tel"
                         value={guestPhone}
-                        onChange={(e) => setGuestPhone(e.target.value)}
+                        onChange={(e) => {
+                          setGuestPhone(e.target.value);
+                          if (errors.guestPhone) setErrors(prev => ({ ...prev, guestPhone: "" }));
+                        }}
                         placeholder="+91 9876543210"
+                        className={errors.guestPhone ? "border-red-500 focus-visible:ring-red-500" : ""}
                         required
                       />
+                      {errors.guestPhone && <p className="text-xs text-red-500 mt-1">{errors.guestPhone}</p>}
                     </div>
-                    
+
                     <div>
                       <Label htmlFor="idproof">ID Proof (Optional)</Label>
                       <Input
@@ -187,9 +237,8 @@ export function BookingPage() {
                       return (
                         <div
                           key={method.id}
-                          className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                            paymentMethod === method.id ? "border-blue-500 bg-blue-50" : "border-gray-200"
-                          }`}
+                          className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-colors ${paymentMethod === method.id ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                            }`}
                           onClick={() => setPaymentMethod(method.id)}
                         >
                           <RadioGroupItem value={method.id} id={method.id} />
@@ -207,17 +256,37 @@ export function BookingPage() {
                 {paymentMethod === "card" && (
                   <div className="mt-6 space-y-4">
                     <div>
-                      <Label htmlFor="cardNumber">Card Number</Label>
-                      <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
+                      <Label htmlFor="cardNumber" className={errors.cardNumber ? "text-red-500" : ""}>Card Number *</Label>
+                      <Input
+                        id="cardNumber"
+                        placeholder="1234 5678 9012 3456"
+                        className={errors.cardNumber ? "border-red-500 focus-visible:ring-red-500" : ""}
+                        onChange={() => { if (errors.cardNumber) setErrors(prev => ({ ...prev, cardNumber: "" })) }}
+                      />
+                      {errors.cardNumber && <p className="text-xs text-red-500 mt-1">{errors.cardNumber}</p>}
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="expiry">Expiry Date</Label>
-                        <Input id="expiry" placeholder="MM/YY" />
+                        <Label htmlFor="expiry" className={errors.expiry ? "text-red-500" : ""}>Expiry Date *</Label>
+                        <Input
+                          id="expiry"
+                          placeholder="MM/YY"
+                          className={errors.expiry ? "border-red-500 focus-visible:ring-red-500" : ""}
+                          onChange={() => { if (errors.expiry) setErrors(prev => ({ ...prev, expiry: "" })) }}
+                        />
+                        {errors.expiry && <p className="text-xs text-red-500 mt-1">{errors.expiry}</p>}
                       </div>
                       <div>
-                        <Label htmlFor="cvv">CVV</Label>
-                        <Input id="cvv" placeholder="123" type="password" maxLength={3} />
+                        <Label htmlFor="cvv" className={errors.cvv ? "text-red-500" : ""}>CVV *</Label>
+                        <Input
+                          id="cvv"
+                          placeholder="123"
+                          type="password"
+                          maxLength={3}
+                          className={errors.cvv ? "border-red-500 focus-visible:ring-red-500" : ""}
+                          onChange={() => { if (errors.cvv) setErrors(prev => ({ ...prev, cvv: "" })) }}
+                        />
+                        {errors.cvv && <p className="text-xs text-red-500 mt-1">{errors.cvv}</p>}
                       </div>
                     </div>
                   </div>
@@ -225,8 +294,14 @@ export function BookingPage() {
 
                 {paymentMethod === "upi" && (
                   <div className="mt-6">
-                    <Label htmlFor="upiId">UPI ID</Label>
-                    <Input id="upiId" placeholder="yourname@upi" />
+                    <Label htmlFor="upiId" className={errors.upiId ? "text-red-500" : ""}>UPI ID *</Label>
+                    <Input
+                      id="upiId"
+                      placeholder="yourname@upi"
+                      className={errors.upiId ? "border-red-500 focus-visible:ring-red-500" : ""}
+                      onChange={() => { if (errors.upiId) setErrors(prev => ({ ...prev, upiId: "" })) }}
+                    />
+                    {errors.upiId && <p className="text-xs text-red-500 mt-1">{errors.upiId}</p>}
                   </div>
                 )}
 

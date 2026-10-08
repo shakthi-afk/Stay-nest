@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useApp } from "../context/AppContext";
-import { hostels } from "../data/hostels";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
@@ -11,7 +10,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 export function HomePage() {
   const navigate = useNavigate();
-  const { setSearchParams, wishlist, addToWishlist, removeFromWishlist } = useApp();
+  const { hostels, setSearchParams, wishlist, addToWishlist, removeFromWishlist } = useApp();
   const [location, setLocation] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");

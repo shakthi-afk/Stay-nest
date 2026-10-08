@@ -20,6 +20,7 @@ export function Header() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUser(null);
+    localStorage.removeItem("isAdminAuthenticated");
     navigate("/");
   };
 
@@ -94,8 +95,8 @@ export function Header() {
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-500 ${scrolled
-          ? "bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/50 border-b border-slate-100"
-          : "bg-white/95 backdrop-blur-sm"
+        ? "bg-white/80 backdrop-blur-xl shadow-lg shadow-slate-200/50 border-b border-slate-100"
+        : "bg-white/95 backdrop-blur-sm"
         }`}
     >
       <div className="container mx-auto px-6 py-3">

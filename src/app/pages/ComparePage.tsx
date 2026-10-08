@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import { useApp } from "../context/AppContext";
-import { hostels } from "../data/hostels";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -10,7 +9,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 export function ComparePage() {
   const navigate = useNavigate();
-  const { compareList, removeFromCompare } = useApp();
+  const { hostels, compareList, removeFromCompare } = useApp();
 
   const comparedHostels = hostels.filter((hostel) => compareList.includes(hostel.id));
 
@@ -233,7 +232,7 @@ export function ComparePage() {
                   alt={hostel.name}
                   className="w-full h-48 object-cover rounded-lg"
                 />
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Location</p>
@@ -242,17 +241,17 @@ export function ComparePage() {
                       {hostel.location}
                     </p>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-gray-600">Price</p>
                     <p className="text-xl">₹{hostel.price}/night</p>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-gray-600">Type</p>
                     <Badge>{hostel.isAC ? "AC" : "Non-AC"}</Badge>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-gray-600">Rating</p>
                     <div className="flex items-center gap-1">
@@ -260,18 +259,18 @@ export function ComparePage() {
                       <span>{hostel.rating}</span>
                     </div>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-gray-600">Available Rooms</p>
                     <p>{hostel.availableRooms > 0 ? `${hostel.availableRooms} rooms` : "Sold Out"}</p>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-gray-600">Distance</p>
                     <p>{hostel.distanceFromCenter}</p>
                   </div>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-600 mb-2">Amenities</p>
                   <div className="flex flex-wrap gap-2">
@@ -282,17 +281,17 @@ export function ComparePage() {
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Room Types</p>
                   <p>{hostel.roomTypes.join(", ")}</p>
                 </div>
-                
+
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Cancellation Policy</p>
                   <p className="text-sm">{hostel.cancellationPolicy}</p>
                 </div>
-                
+
                 <Button
                   className="w-full"
                   onClick={() => navigate(`/hostel/${hostel.id}`)}

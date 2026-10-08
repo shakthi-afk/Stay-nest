@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useApp } from "../context/AppContext";
-import { hostels } from "../data/hostels";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -13,7 +12,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 export function HostelDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { wishlist, addToWishlist, removeFromWishlist, setShowLoginModal, isLoggedIn } = useApp();
+  const { hostels, wishlist, addToWishlist, removeFromWishlist, setShowLoginModal, isLoggedIn } = useApp();
   const [selectedRoomType, setSelectedRoomType] = useState<"ac" | "non-ac">("ac");
 
   const hostel = hostels.find((h) => h.id === id);
@@ -99,18 +98,19 @@ export function HostelDetailPage() {
                     className="bg-gray-100 rounded-full p-3 hover:bg-gray-200"
                   >
                     <Heart
-                      className={`size-6 ${
-                        wishlist.includes(hostel.id) ? "fill-red-500 text-red-500" : "text-gray-600"
-                      }`}
+                      className={`size-6 ${wishlist.includes(hostel.id) ? "fill-red-500 text-red-500" : "text-gray-600"
+                        }`}
                     />
                   </button>
                 </div>
-                
+
                 <div className="flex items-center gap-4 mt-4">
                   <div className="flex items-center gap-1">
                     <Star className="size-5 fill-yellow-400 text-yellow-400" />
                     <span className="text-lg">{hostel.rating}</span>
-                    <span className="text-gray-600">({hostel.reviews.length} reviews)</span>
+                    <span className="text-gray-600">
+                      ({hostel.rating >= 4.5 ? "Excellent" : hostel.rating >= 4 ? "Very Good" : "Good"})
+                    </span>
                   </div>
                   <Badge className="text-base py-1 px-3">
                     {hostel.isAC ? "AC Available" : "Non-AC"}
@@ -126,7 +126,7 @@ export function HostelDetailPage() {
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent>
                 <p className="text-gray-700">{hostel.description}</p>
               </CardContent>
@@ -140,9 +140,8 @@ export function HostelDetailPage() {
               <CardContent className="space-y-4">
                 {hostel.isAC && (
                   <div
-                    className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                      selectedRoomType === "ac" ? "border-blue-500 bg-blue-50" : "border-gray-200"
-                    }`}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${selectedRoomType === "ac" ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                      }`}
                     onClick={() => setSelectedRoomType("ac")}
                   >
                     <div className="flex items-center justify-between">
@@ -157,11 +156,10 @@ export function HostelDetailPage() {
                     </div>
                   </div>
                 )}
-                
+
                 <div
-                  className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                    selectedRoomType === "non-ac" ? "border-blue-500 bg-blue-50" : "border-gray-200"
-                  }`}
+                  className={`p-4 border-2 rounded-lg cursor-pointer transition-colors ${selectedRoomType === "non-ac" ? "border-blue-500 bg-blue-50" : "border-gray-200"
+                    }`}
                   onClick={() => setSelectedRoomType("non-ac")}
                 >
                   <div className="flex items-center justify-between">
@@ -211,22 +209,26 @@ export function HostelDetailPage() {
                 <CardTitle>Guest Reviews</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {hostel.reviews.map((review) => (
-                  <div key={review.id}>
-                    <div className="flex items-center justify-between mb-2">
-                      <p>{review.userName}</p>
-                      <div className="flex items-center gap-1">
-                        <Star className="size-4 fill-yellow-400 text-yellow-400" />
-                        <span>{review.rating}</span>
+                {hostel.reviews.length === 0 ? (
+                  <p className="text-gray-500 text-center py-4">No reviews yet. Be the first to review!</p>
+                ) : (
+                  hostel.reviews.map((review) => (
+                    <div key={review.id}>
+                      <div className="flex items-center justify-between mb-2">
+                        <p>{review.userName}</p>
+                        <div className="flex items-center gap-1">
+                          <Star className="size-4 fill-yellow-400 text-yellow-400" />
+                          <span>{review.rating}</span>
+                        </div>
                       </div>
+                      <p className="text-gray-700">{review.comment}</p>
+                      <p className="text-sm text-gray-500 mt-1">{new Date(review.date).toLocaleDateString()}</p>
+                      {review.id !== hostel.reviews[hostel.reviews.length - 1].id && (
+                        <Separator className="mt-4" />
+                      )}
                     </div>
-                    <p className="text-gray-700">{review.comment}</p>
-                    <p className="text-sm text-gray-500 mt-1">{new Date(review.date).toLocaleDateString()}</p>
-                    {review.id !== hostel.reviews[hostel.reviews.length - 1].id && (
-                      <Separator className="mt-4" />
-                    )}
-                  </div>
-                ))}
+                  ))
+                )}
               </CardContent>
             </Card>
           </div>
@@ -252,7 +254,7 @@ export function HostelDetailPage() {
                     <span className="text-gray-600">Room Type</span>
                     <Badge>{selectedRoomType === "ac" ? "AC" : "Non-AC"}</Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <span className="text-gray-600">Distance from Center</span>
                     <span>{hostel.distanceFromCenter}</span>
