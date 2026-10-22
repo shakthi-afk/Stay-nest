@@ -11,6 +11,7 @@ interface ImportMetaEnv {
     readonly VITE_SOCIAL_TWITTER: string
     readonly VITE_SOCIAL_INSTAGRAM: string
     readonly VITE_API_URL: string
+    readonly VITE_GEMINI_API_KEY: string
 }
 
 interface ImportMeta {

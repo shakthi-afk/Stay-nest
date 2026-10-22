@@ -2,6 +2,7 @@ import { Outlet } from "react-router";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { LoginModal } from "./LoginModal";
+import AIChatAssistant from "./AIChatAssistant";
 
 export function Layout() {
   return (
@@ -12,6 +13,8 @@ export function Layout() {
       </main>
       <Footer />
       <LoginModal />
+      {/* AI Assistant — floats over all pages */}
+      <AIChatAssistant />
     </div>
   );
 }
